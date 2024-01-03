@@ -1,35 +1,37 @@
-# ForgeGradle
-/.gradle
-/build
-/run
-
-# Minecraft runtime files and config files
-/logs
-/config
-options.txt
-/saves
-usernamecache.json
-
-# Eclipse
+.gradle
+.settings
+/.idea/
+/.vscode/
+/run/
+/build/
+/eclipse/
 .classpath
 .project
-/.settings
-/bin
-/eclipse
-
-# IntelliJ
-/.idea
+/bin/
+/config/
+/crash-reports/
+/logs/
+options.txt
+/saves/
+usernamecache.json
+banned-ips.json
+banned-players.json
+eula.txt
+ops.json
+server.properties
+servers.dat
+usercache.json
+whitelist.json
+/out/
 *.iml
 *.ipr
 *.iws
-/out
-
-# Mac Stuff
-.DS_Store
-*.command
-
-# External APIs
-/lib
-
-# BeefCore, when it's copied into the source tree
-/src/main/java/erogenousbeef/core
+src/main/resources/mixins.*([!.]).json
+*.bat
+*.DS_Store
+!gradlew.bat
+.factorypath
+addon.local.gradle
+addon.local.gradle.kts
+addon.late.local.gradle
+addon.late.local.gradle.kts

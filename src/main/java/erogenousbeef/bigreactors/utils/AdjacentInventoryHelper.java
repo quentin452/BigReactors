@@ -15,13 +15,13 @@ import erogenousbeef.bigreactors.utils.intermod.ModHelperBase;
  * Wraps a given direction's inventory exposure. Listen for block/tile changes and set
  * whatever tile entity you find in that direction as this object's
  * tracked tile entity.
- * 
+ *
  * You can then use distribute() to safely try to distribute items.
  * @author Erogenous Beef
  */
 public class AdjacentInventoryHelper {
 
-	private ForgeDirection dir;
+	private final ForgeDirection dir;
 	private TileEntity entity;
 	private IItemDuct duct;
 	private IPipeTile pipe;
@@ -48,7 +48,7 @@ public class AdjacentInventoryHelper {
 		if(entity == null || itemToDistribute == null) {
 			return itemToDistribute;
 		}
-		
+
 		if(!hasConnection()) {
 			return itemToDistribute;
 		}
@@ -59,7 +59,7 @@ public class AdjacentInventoryHelper {
 		else if(ModHelperBase.useBuildcraftTransport && pipe != null) {
 			if(pipe.isPipeConnected(dir.getOpposite())) {
 				itemToDistribute.stackSize -= pipe.injectItem(itemToDistribute.copy(), true, dir.getOpposite());
-				
+
 				if(itemToDistribute.stackSize <= 0) {
 					itemToDistribute = null;
 				}
@@ -72,18 +72,18 @@ public class AdjacentInventoryHelper {
 
 		return itemToDistribute;
 	}
-	
+
 	public boolean hasConnection() {
 		return inv != null || pipe != null || duct != null;
 	}
-	
+
 	/**
 	 * @param te The new tile entity for this helper to cache.
 	 * @return True if this helper's wrapped inventory changed, false otherwise.
 	 */
 	public boolean set(TileEntity te) {
 		if(entity == te) { return false; }
-		
+
 		if(te == null) {
 			duct = null;
 			pipe = null;
@@ -98,23 +98,23 @@ public class AdjacentInventoryHelper {
 		else if(te instanceof IInventory) {
 			setInv(te);
 		}
-		
+
 		entity = te;
 		return true;
 	}
-	
+
 	private void setDuct(IItemDuct duct) {
 		this.duct = duct;
 		this.pipe = null;
 		this.inv = null;
 	}
-	
+
 	private void setPipe(IPipeTile pipe) {
 		this.pipe = pipe;
 		this.duct = null;
 		this.inv = null;
 	}
-	
+
 	private void setInv(TileEntity te) {
 		this.pipe = null;
 		this.duct = null;

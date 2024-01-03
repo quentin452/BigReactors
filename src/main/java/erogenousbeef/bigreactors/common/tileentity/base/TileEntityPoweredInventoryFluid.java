@@ -19,10 +19,10 @@ public abstract class TileEntityPoweredInventoryFluid extends
 
 	protected static final FluidTank[] kEmptyFluidTankList = new FluidTank[0];
 	protected static final int FLUIDTANK_NONE = -1;
-	
+
 	public TileEntityPoweredInventoryFluid() {
 		super();
-		
+
 		tanks = new FluidTank[getNumTanks()];
 		tankExposureCache = new FluidTank[getNumTanks()][1];
 
@@ -33,7 +33,7 @@ public abstract class TileEntityPoweredInventoryFluid extends
 	}
 
 	// Internal Helpers
-	
+
 	private void readFluidsFromNBT(NBTTagCompound tag) {
 		// Initialize tanks to empty, as we send sparse updates.
 		for(int i = 0; i < tanks.length; i++) {
@@ -50,7 +50,7 @@ public abstract class TileEntityPoweredInventoryFluid extends
 			}
 		}
 	}
-	
+
 	private void writeFluidsToNBT(NBTTagCompound tag) {
 		NBTTagList fluidTagList = new NBTTagList();
 		for(int i = 0; i < getNumTanks(); i++) {
@@ -61,32 +61,32 @@ public abstract class TileEntityPoweredInventoryFluid extends
 				fluidTagList.appendTag(fluidTag);
 			}
 		}
-		
+
 		if(fluidTagList.tagCount() > 0) {
 			tag.setTag("fluids", fluidTagList);
 		}
 	}
-	
+
 	// TileEntity overrides
 	@Override
 	public void readFromNBT(NBTTagCompound tag) {
 		super.readFromNBT(tag);
 		readFluidsFromNBT(tag);
 	}
-	
+
 	@Override
 	public void writeToNBT(NBTTagCompound tag) {
 		super.writeToNBT(tag);
 		writeFluidsToNBT(tag);
 	}
-	
+
 	// TileEntityBeefBase
 	@Override
 	protected void onSendUpdate(NBTTagCompound updateTag) {
 		super.onSendUpdate(updateTag);
 		writeFluidsToNBT(updateTag);
 	}
-	
+
 	@Override
 	public void onReceiveUpdate(NBTTagCompound updateTag) {
 		super.onReceiveUpdate(updateTag);
@@ -94,13 +94,13 @@ public abstract class TileEntityPoweredInventoryFluid extends
 	}
 
 	// IFluidHandler
-	
+
 	/**
 	 * The number of fluid tanks in this machine.
 	 * @return The number of fluid tanks in this machine.
 	 */
 	 public abstract int getNumTanks();
-	 
+
 	 /**
 	  * Returns the size of the tank at a given position
 	  * @param tankIndex The index of the given tank in the tanks array.
@@ -115,7 +115,7 @@ public abstract class TileEntityPoweredInventoryFluid extends
 	  * @return The index of the exposed tank, or -1 for none.
 	  */
 	 public abstract int getExposedTankFromSide(int side);
-	 
+
 	/**
      * Fills fluid into internal tanks, distribution is left to the ITankContainer.
      * @param from Orientation the fluid is pumped in from.
@@ -138,7 +138,7 @@ public abstract class TileEntityPoweredInventoryFluid extends
     		return fill(tankToFill, resource, doFill);
     	}
     }
- 
+
     /**
      * Fills fluid into the specified internal tank.
      * @param tankIndex the index of the tank to fill
@@ -150,13 +150,13 @@ public abstract class TileEntityPoweredInventoryFluid extends
     	if(!isFluidValidForTank(tankIndex, resource)) {
     		return 0;
     	}
-    	
+
     	int res = tanks[tankIndex].fill(resource, doFill);
     	return res;
     }
 
     /** Drains fluid out of internal tanks, distribution is left entirely to the IFluidHandler.
-	 * 
+	 *
 	 * This method is not Fluid-sensitive.
      * @param from Orientation the fluid is drained to.
      * @param maxDrain Maximum amount of fluid to drain.
@@ -175,7 +175,7 @@ public abstract class TileEntityPoweredInventoryFluid extends
     		return drain(tankToDrain, maxDrain, doDrain);
     	}
     }
-   
+
     /**
      * Drains fluid out of the specified internal tank.
      * @param tankIndex the index of the tank to drain
@@ -189,7 +189,7 @@ public abstract class TileEntityPoweredInventoryFluid extends
 
     /**
      * Drains fluid out of internal tanks, distribution is left entirely to the IFluidHandler.
-     * 
+     *
      * @param from
      *            Orientation the Fluid is drained to.
      * @param resource
@@ -204,7 +204,7 @@ public abstract class TileEntityPoweredInventoryFluid extends
     	if(from != ForgeDirection.UNKNOWN) {
     		tankToDrain = getExposedTankFromSide(from.ordinal());
     	}
-    	
+
     	if(tankToDrain == FLUIDTANK_NONE) {
     		return null;
     	}
@@ -213,11 +213,11 @@ public abstract class TileEntityPoweredInventoryFluid extends
     		if(!resource.isFluidEqual( tanks[tankToDrain].getFluid() )) {
     			return null;
     		}
-    		
+
     		return drain(tankToDrain, resource.amount, doDrain);
     	}
     }
-    
+
     /**
      * @param direction tank side: UNKNOWN for default tank set
      * @return Array of {@link FluidTank}s contained in this ITankContainer for this direction
@@ -231,7 +231,7 @@ public abstract class TileEntityPoweredInventoryFluid extends
     		if(exposure == FLUIDTANK_NONE) {
     			return kEmptyFluidTankList;
     		}
-    		
+
     		return tankExposureCache[exposure];
     	}
     }
@@ -252,19 +252,19 @@ public abstract class TileEntityPoweredInventoryFluid extends
     		if(tankIdx == FLUIDTANK_NONE) {
     			return null;
     		}
-    		
+
     		IFluidTank t = tanks[tankIdx];
     		if(type == null || isFluidValidForTank(tankIdx, type)) {
     			return t;
     		}
-    		
+
     		return null;
     	}
     }
 
     /**
      * Returns true if the given fluid can be inserted into the given direction.
-     * 
+     *
      * More formally, this should return true if fluid is able to enter from the given direction.
      */
     public boolean canFill(ForgeDirection from, Fluid fluid) {
@@ -280,13 +280,13 @@ public abstract class TileEntityPoweredInventoryFluid extends
     		return true;
     	}
     	else {
-    		return tank.getFluid().fluidID == fluid.getID();
+    		return tank.getFluid().getFluidID() == fluid.getID();
     	}
     }
 
     /**
      * Returns true if the given fluid can be extracted from the given direction.
-     * 
+     *
      * More formally, this should return true if fluid is able to leave from the given direction.
      */
     public boolean canDrain(ForgeDirection from, Fluid fluid) {
@@ -302,14 +302,14 @@ public abstract class TileEntityPoweredInventoryFluid extends
     		return false;
     	}
     	else {
-    		return tank.getFluid().fluidID == fluid.getID();
+    		return tank.getFluid().getFluidID() == fluid.getID();
     	}
     }
 
     /**
      * Returns an array of objects which represent the internal tanks. These objects cannot be used
      * to manipulate the internal tanks. See {@link FluidTankInfo}.
-     * 
+     *
      * @param from
      *            Orientation determining which tanks should be queried.
      * @return Info for the relevant internal tanks.
@@ -321,7 +321,7 @@ public abstract class TileEntityPoweredInventoryFluid extends
     /**
      * Returns an array of objects which represent the internal tanks. These objects cannot be used
      * to manipulate the internal tanks. See {@link FluidTankInfo}.
-     * 
+     *
      * @return Info for the relevant internal tanks.
      */
     public FluidTankInfo[] getTankInfo() {
@@ -329,20 +329,20 @@ public abstract class TileEntityPoweredInventoryFluid extends
     	for(int i = 0; i < tanks.length; i++) {
     		infos[i] = tanks[i].getInfo();
     	}
-    	
+
     	return infos;
     }
-    
+
     /**
      * Check if the given fluid is valid for the given tank.
      * Note that the fluid may be null.
-     * 
+     *
      * @param tankIdx The index of the tank to check validity for.
      * @param type The fluid to check validity for, or null.
      * @return True if the fluid can go in the identified tank, false otherwise.
      */
 	protected abstract boolean isFluidValidForTank(int tankIdx, FluidStack type);
-	
+
 	// Helpers
 	/**
 	 * @param fluid The fluid whose default tank is being queried.
